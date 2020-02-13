@@ -1,0 +1,221 @@
+import turtle
+import time
+
+
+wd = turtle.Screen()
+drawer = turtle.Turtle()
+drawer.speed(0)
+wd.screensize(500, 500)
+drawer.hideturtle()
+size = 20
+drawer.penup()
+drawer.setposition(0, 250)
+# n, count of thing. m, count of second thing. l, count of third thing
+n = 2
+m = 0
+k = 0
+# starting value of money & cost. cost for first thing, cost_m for second, cost_l for third thing
+money = 0
+cost = 1000
+cost_m = 5000
+cost_k = 10000
+
+money_k = 0
+money_m = 0
+money_mb = 0
+# fibonacci nums
+n_terms = n+1
+n1, n2 = 1, 2
+count = 0
+# creating a array for fibonacci nums
+nums = []
+# this for loop for adding nums to array
+for i in range(1000):
+    nums.append(n1)
+    nth = n1 + n2
+# update values
+    n1 = n2
+    n2 = nth
+    count += 1
+# end of fibonacci
+# upgrade level start point
+leveling = 1
+
+
+# first thing is triangle generate 100, cost 1k at beginning
+def first_thing():
+    drawer.penup()
+    drawer.pendown()
+    drawer.color('black')
+    drawer.begin_fill()
+    for p in range(3):
+        drawer.forward(size)
+        drawer.left(120)
+    drawer.end_fill()
+    drawer.penup()
+
+
+# second thing is square generate 200, cost 5k at beginning
+def second_thing():
+    drawer.penup()
+    drawer.pendown()
+    drawer.color('black')
+    drawer.begin_fill()
+    for p in range(4):
+        drawer.forward(size*3/2)
+        drawer.left(90)
+    drawer.end_fill()
+    drawer.penup()
+
+
+# third thing is pentagon generate 1k, cost 10k at beginning
+def third_thing():
+    drawer.penup()
+    drawer.pendown()
+    drawer.color('black')
+    drawer.begin_fill()
+    for p in range(5):
+        drawer.forward(size*2)
+        drawer.left(72)
+    drawer.end_fill()
+    drawer.penup()
+
+
+# func for adding new thing
+def buy(x, y):
+    global n, money, cost, leveling, m, k, cost_m, cost_k
+
+    print(x, y, n)
+    if leveling == 1:
+        if money >= cost:
+            drawer.setposition(x, y)
+            money -= cost
+            cost += n * 100 * nums[n - 2]
+            n += 1
+            first_thing()
+
+            print("you buy first thing.(", n - 1, m, k, ") your money:", money, " next cost of first thing:", cost)
+        else:
+            print('You have: ', money, 'but u need: ', cost, 'you need more money! press a')
+    elif leveling == 2:
+        if money >= cost_m:
+            drawer.setposition(x, y)
+            money -= cost_m
+            m += 1
+            cost_m += 1000 * nums[m]
+
+            second_thing()
+
+            print("you buy second thing.(", n - 1, m, k, ") your money:", money, " next cost of second thing:", cost_m)
+        else:
+            print('You have: ', money, 'but u need: ', cost_m, 'you need more money! press a')
+    elif leveling == 3:
+        if money >= cost_k:
+            drawer.setposition(x, y)
+            money -= cost_k
+            k += 1
+            cost_k += 10000 * nums[k]
+            third_thing()
+
+            print("you buy third thing.(", n - 1, m, k, ")your money:", money, " next cost of third thing:", cost_k)
+        else:
+            print('You have: ', money, 'but u need: ', cost_k, 'you need more money! press a')
+    elif leveling == 4:
+        print('you cant buy anymore just keep pressing a')
+    else:
+        print('sth wrong')
+
+
+# func for adding money, achievements and ending value
+def add_money():
+    global money, n, m, k, money_m, money_k, money_mb
+
+    if money >= 1000 and money_k == 0:
+        print('You have reached 1 K')
+        money_k += 1
+    elif money >= 1000000 and money_m == 0:
+        print('You have reached 1 M')
+        money_m += 1
+    elif money >= 100000000 and money_mb == 0:
+        print('You have reached 100 M')
+        money_mb += 1
+    else:
+        pass
+
+    if money >= 1000000000:
+        print('you won!!')
+        quit()
+    else:
+        if leveling >= 1:
+            money += 200 * (n-1) + 1000 * m + 10000 * k
+            print(money)
+        else:
+            print('sth wrong in adding money')
+            pass
+
+
+def upgrade():
+    global leveling, cost, money, cost_m, cost_k, n, m, k
+    if leveling == 1 and money >= cost_m:
+        money -= cost_m
+        leveling += 1
+        print('u upgraded to second thing, for:', cost_m, 'money is now: ', money)
+    elif leveling == 2 and money >= cost_k:
+        leveling += 1
+        money -= cost_k
+        print('u upgraded to third thing, for:', cost_k, 'money is now: ', money)
+    elif leveling == 3 and money >= 1000000:
+        money -= 1000000
+        leveling += 1
+        n *= 1000
+        m *= 1000
+        k *= 1000
+        print('u upgraded to final upgrade. u will gain 1000x to all thing, for:', 1000000, 'money is now: ', money)
+    elif leveling == 1 and money < cost_m:
+        print('u dont have enough money u have :', money, 'but u need: ', cost_m, 'for upgrade to second thing')
+    elif leveling == 2 and money < cost_k:
+        print('u dont have enough money u have :', money, 'but u need: ', cost_k, 'for upgrade to third thing')
+    elif leveling == 3 and money < 1000000:
+        print('for final upgrade u have: ', money, 'but u need', 1000000, '1M')
+    elif leveling == 4:
+        print('you have reached max level u cant go further.')
+    else:
+        print('error in upgrade func')
+
+
+def d_upgrade():
+    global leveling, money, cost
+    if leveling == 3 and money >= cost_m:
+        money -= cost_m
+        leveling -= 1
+        print('u downgraded to second thing, for:', cost_m, 'money is now: ', money)
+    elif leveling == 2 and money >= cost:
+        leveling -= 1
+        money -= cost
+        print('u downgraded to first thing, for:', cost, 'money is now: ', money)
+    elif leveling == 3 and money < cost_m:
+        print('u dont have enough money u have :', money, 'but u need: ', cost_m, 'for downgrade to second')
+    elif leveling == 2 and money < cost:
+        print('u dont have enough money u have :', money, 'but u need: ', cost, 'for downgrade to first')
+    elif leveling == 1:
+        print('u are in lowest thing, u cant go down further')
+    else:
+        print('error in downgrade func')
+
+
+def game():
+    global money
+
+
+    print(money)
+    first_thing()
+    wd.onscreenclick(buy)
+    wd.listen()
+    wd.onkey(add_money, "a")
+    wd.onkey(upgrade, "w")
+    wd.onkey(d_upgrade, "e")
+
+
+game()
+turtle.done()
+
